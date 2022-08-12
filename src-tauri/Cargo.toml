@@ -20,7 +20,7 @@ winapi = { version = "0.3.0", features = ["std", "libloaderapi", "winuser", "win
 num-traits = "0.2"
 num-derive = "0.3"
 widestring = "1.0.2"
-tauri = { version = "1.0.5", features = ["api-all"] }
+tauri = { version = "1.0.5", features = ["api-all", "system-tray"] }
 
 [features]
 # by default Tauri runs in production mode

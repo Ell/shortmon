@@ -9,7 +9,9 @@ use std::{
 };
 
 use monitor::{input::MonitorInput, Monitor};
-use tauri::Manager;
+use tauri::{
+    AppHandle, CustomMenuItem, Manager, RunEvent, SystemTray, SystemTrayEvent, SystemTrayMenu,
+};
 
 #[macro_use]
 extern crate num_derive;
@@ -38,7 +40,7 @@ fn refresh_monitor_info(state: tauri::State<'_, MonitorManager>, window: tauri::
     state
         .tx
         .send(MonitorManagerCommand::RefreshList(window.clone()))
-        .unwrap();
+        .ok();
 }
 
 #[tauri::command]
@@ -50,7 +52,7 @@ fn switch_monitor_input(
     state
         .tx
         .send(MonitorManagerCommand::SwitchInput((monitor_idx, input)))
-        .unwrap();
+        .ok();
 }
 
 fn spawn_monitor_manager() -> SyncSender<MonitorManagerCommand> {
@@ -60,7 +62,7 @@ fn spawn_monitor_manager() -> SyncSender<MonitorManagerCommand> {
     ) = mpsc::sync_channel(8);
 
     thread::spawn(move || {
-        let mut monitors = Monitor::get_all_monitors().map_or(vec![], |v| v);
+        let mut monitors = vec![];
 
         for event in rx {
             match event {
@@ -92,11 +94,46 @@ fn spawn_monitor_manager() -> SyncSender<MonitorManagerCommand> {
     tx
 }
 
+fn make_tray() -> SystemTray {
+    let menu = SystemTrayMenu::new()
+        .add_item(CustomMenuItem::new("refresh", "Refresh"))
+        .add_item(CustomMenuItem::new("quit", "Quit"));
+
+    SystemTray::new().with_menu(menu)
+}
+
+fn handle_tray_event(app: &AppHandle, event: SystemTrayEvent) {
+    match event {
+        SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+            "refresh" => {
+                if let Some(window) = app.get_window("main") {
+                    let state = app.state::<MonitorManager>();
+
+                    state
+                        .tx
+                        .send(MonitorManagerCommand::RefreshList(window.clone()))
+                        .ok();
+                }
+            }
+            "quit" => app.exit(0),
+            _ => (),
+        },
+        SystemTrayEvent::DoubleClick { .. } => {
+            if let Some(window) = app.get_window("main") {
+                window.show().ok();
+            }
+        }
+        _ => (),
+    };
+}
+
 fn main() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .manage(MonitorManager {
             tx: spawn_monitor_manager(),
         })
+        .system_tray(make_tray())
+        .on_system_tray_event(handle_tray_event)
         .setup(|app| {
             #[cfg(debug_assertions)]
             {
@@ -111,6 +148,22 @@ fn main() {
             refresh_monitor_info,
             switch_monitor_input
         ])
-        .run(tauri::generate_context!())
+        .build(tauri::generate_context!())
         .expect("error while running tauri application");
+
+    app.run(|app_handle, e| match e {
+        RunEvent::WindowEvent { event, .. } => match event {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                let app_handle = app_handle.clone();
+
+                api.prevent_close();
+
+                if let Some(window) = app_handle.get_window("main") {
+                    window.hide().ok();
+                }
+            }
+            _ => (),
+        },
+        _ => (),
+    });
 }

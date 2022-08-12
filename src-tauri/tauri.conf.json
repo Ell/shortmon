@@ -11,6 +11,9 @@
     "version": "0.1.0"
   },
   "tauri": {
+    "systemTray": {
+      "iconPath": "icons/32x32.png"
+    },
     "allowlist": {
       "all": true
     },
@@ -56,10 +59,14 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
-        "resizable": true,
+        "minHeight": 600,
+        "resizable": false,
         "title": "Shortmon",
-        "width": 800
+        "minWidth": 400,
+        "maxWidth": 400,
+        "maxHeight": 600,
+        "height": 600,
+        "width": 400
       }
     ]
   }

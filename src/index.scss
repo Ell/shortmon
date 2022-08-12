@@ -1,0 +1,88 @@
+html,
+body {
+    width: 400px;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+
+    font-family: "Segoe UI", "Helvetica", "Arial", sans-serif;
+}
+
+#container {
+    width: 400px;
+    height: 100%;
+}
+
+.refresh-icon {
+    color: white;
+    font-size: 8px;
+}
+
+.app {
+    width: 400px;
+    height: 100%;
+    background-color: #222;
+
+    &__header {
+        height: 60px;
+        background-color: #333;
+        display: flex;
+        flex-direction: row;
+
+        &__title {
+            width: 100%;
+            font-size: 24px;
+            font-weight: 300;
+            padding: 12px 10px;
+            color: white;
+        }
+
+        &__refresh {
+            text-align: end;
+
+            svg {
+                width: 30px;
+                height: 30px;
+                color: white;
+                padding: 16px 15px;
+            }
+        }
+    }
+
+    &__content {
+        width: 100%;
+    }
+}
+
+.monitor {
+    color: white;
+    background-color: lighten(#222, 0);
+    border-bottom: 1px solid #333;
+    box-sizing: border-box;
+
+    &__header {
+        font-size: 18px;
+        width: 100%;
+        cursor: pointer;
+        padding: 15px 10px;
+    }
+
+    &__info {
+        border-top: 1px solid #444;
+        padding: 0px 14px;
+        background-color: lighten(#222, 5%);
+
+        &__input {
+            width: 100%;
+            padding: 15px 0px;
+
+            &__name {
+                font-size: 18px;
+                text-decoration: underline dotted;
+                text-underline-offset: 3px;
+                cursor: pointer;
+            }
+        }
+    }
+}
