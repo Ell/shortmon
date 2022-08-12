@@ -3,14 +3,6 @@ import { useState, useEffect } from "preact/hooks";
 import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
 
-invoke("refresh_monitor_info");
-
-await listen("monitor-info", (event) => {
-    console.log("monitor-info", event.payload);
-});
-
-invoke("refresh_monitor_info");
-
 interface MonitorInfo {
     id: number;
     model: string;
@@ -45,6 +37,10 @@ function renderMonitors(monitors: IndexedMonitorInfo) {
 
 export function App() {
     const [monitors, setMonitors] = useState<IndexedMonitorInfo>({});
+
+    useEffect(() => {
+        invoke("refresh_monitor_info");
+    }, []);
 
     useEffect(() => {
         async function parseMonitorInfoEvent() {
