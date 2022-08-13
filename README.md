@@ -6,7 +6,7 @@ Easily switch between monitor inputs with the press of a button(s) or click
 
 ![Monitor list](https://i.ell.dev/uIZzw7w1.png)
 
-# Building
+## Building
 
 Requirments:
 
