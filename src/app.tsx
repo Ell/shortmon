@@ -23,7 +23,6 @@ const MonitorInfoList: FunctionComponent<MonitorInfoListProps> = ({
     toggled,
     onToggle,
 }) => {
-    console.log("toggled:", toggled);
     return (
         <div className="monitor">
             <div
