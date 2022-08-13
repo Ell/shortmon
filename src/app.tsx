@@ -12,6 +12,12 @@ interface MonitorInfo {
 
 type IndexedMonitorInfo = { [id: number]: MonitorInfo };
 
+interface MonitorShortcutProps {
+    shortcut: string[];
+}
+
+const MonitorShortcut = () => {};
+
 interface MonitorInfoListProps {
     monitor: MonitorInfo;
     toggled: boolean;
