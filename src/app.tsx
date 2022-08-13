@@ -112,16 +112,21 @@ export function App() {
 
     useEffect(() => {
         async function parseMonitorInfoEvent() {
-            await listen<MonitorInfo[]>("monitor-info", (event) => {
-                const monitors = event.payload.reduce(
-                    (monitors: IndexedMonitorInfo, monitor) => {
-                        monitors[monitor.id] = monitor;
-                        return monitors;
-                    },
-                    {}
-                );
-                setMonitors(monitors);
-            });
+            const listener = await listen<MonitorInfo[]>(
+                "monitor-info",
+                (event) => {
+                    const monitors = event.payload.reduce(
+                        (monitors: IndexedMonitorInfo, monitor) => {
+                            monitors[monitor.id] = monitor;
+                            return monitors;
+                        },
+                        {}
+                    );
+                    setMonitors(monitors);
+                }
+            );
+
+            return () => listener();
         }
 
         parseMonitorInfoEvent();

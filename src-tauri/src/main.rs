@@ -70,14 +70,22 @@ fn spawn_monitor_manager() -> SyncSender<MonitorManagerCommand> {
                     monitors = Monitor::get_all_monitors().map_or(vec![], |v| v);
                     let info_list = monitors
                         .iter()
-                        .map(|m| MonitorInfo {
-                            id: m.id,
-                            model: m
+                        .map(|m| {
+                            let mut display_model = m
                                 .capabilities
                                 .as_ref()
                                 .map(|c| c.clone().display_model)
-                                .unwrap_or("Generic Display".to_string()),
-                            inputs: m.get_inputs().unwrap_or(vec![]),
+                                .unwrap_or("Generic Display".to_string());
+
+                            if display_model == "" {
+                                display_model = "Generic Display".to_string();
+                            }
+
+                            MonitorInfo {
+                                id: m.id,
+                                model: display_model,
+                                inputs: m.get_inputs().unwrap_or(vec![]),
+                            }
                         })
                         .collect::<Vec<_>>();
                     window.emit("monitor-info", info_list).unwrap();
