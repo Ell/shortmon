@@ -21,6 +21,7 @@ num-traits = "0.2"
 num-derive = "0.3"
 widestring = "1.0.2"
 tauri = { version = "1.0.5", features = ["api-all", "system-tray"] }
+ddc-hi = "0.4"
 
 [features]
 # by default Tauri runs in production mode
